@@ -5,13 +5,14 @@ namespace Drupal\Driver\Fields\Drupal8;
 /**
  * Daterange field handler for Drupal 8.
  */
-class DaterangeHandler extends AbstractHandler {
+class DaterangeHandler extends DatetimeHandler {
 
   /**
    * {@inheritdoc}
    */
   public function expand($values) {
     $return = [];
+
     foreach ($values as $value) {
       // Allow date ranges properties to be specified either explicitly,
       // or implicitly by array position.
@@ -22,18 +23,12 @@ class DaterangeHandler extends AbstractHandler {
         if (isset($value[1])) {
           $value['end_value'] = $value[1];
         }
-        else {
-          // Allow end value to be optional (D#2794481).
-          $value['end_value'] = NULL;
-        }
       }
-      $start = str_replace(' ', 'T', $value['value']);
-      $end = str_replace(' ', 'T', $value['end_value']);
-      $return[] = [
-        'value' => $start,
-        'end_value' => $end,
-      ];
+
+      // Filter out NULL values to allow end value to be optional.
+      $return[] = parent::expand(array_filter($value));
     }
+
     return $return;
   }
 
