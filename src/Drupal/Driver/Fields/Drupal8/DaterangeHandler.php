@@ -14,6 +14,11 @@ class DaterangeHandler extends DatetimeHandler {
     $return = [];
 
     foreach ($values as $value) {
+      // Value will be a string if only 1 value is provided without date
+      // properties.
+      if (!is_array($value)) {
+        $value = ['value' => $value];
+      }
       // Allow date ranges properties to be specified either explicitly,
       // or implicitly by array position.
       if (!isset($value['value']) && isset($value[0])) {
